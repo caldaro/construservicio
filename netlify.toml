@@ -1,0 +1,13 @@
+[build]
+  command = "mkdir -p dist/facturero && cp -r web/* dist/ && cp appcreator24/index.html dist/facturero/index.html"
+  publish = "dist"
+
+[[redirects]]
+  from = "/facturero"
+  to = "/facturero/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/facturero/"
+  to = "/facturero/index.html"
+  status = 200
