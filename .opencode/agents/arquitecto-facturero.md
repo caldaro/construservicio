@@ -13,7 +13,7 @@ Construye y mantiene ConstruServicio OS siguiendo `AGENTS.md`. Es responsable de
 
 `public/` es la fuente única editable. Cada ajuste visual, de campos o de PDF debe compilarse inmediatamente a `appcreator24/index.html` mediante `scripts/build-appcreator24.ps1`, manteniendo ambas versiones sincronizadas.
 
-En AppCreator24 no registres `sw.js` ni uses recursos externos relativos: el compilado debe incrustar CSS, los cinco módulos JavaScript y `vendor/jspdf.umd.min.js`. WhatsApp debe tener respaldo con `window.location.href` hacia `api.whatsapp.com`; el PDF debe combinar `doc.save(...)` con vista previa modal e impresión (`window.print()`) para WebView.
+En AppCreator24 no registres `sw.js` ni uses recursos externos relativos: el compilado debe incrustar CSS, los cinco módulos JavaScript, `template-data.js`, `vendor/jspdf.umd.min.js` y `vendor/pdf-lib.min.js`. El PDF debe estampar los datos sobre `modelo-factura.pdf`, conservar solo la página 1 y soportar `?debug=grid` para calibración. WhatsApp debe tener respaldo con `window.location.href` hacia `api.whatsapp.com`; el PDF debe ofrecer descarga, vista previa modal e impresión (`window.print()`) para WebView.
 
 El dueño y responsable principal de ConstruServicio es **Richard Chávez**. Usa `3144733375` y `construserviciolimitada@gmail.com` en la identidad corporativa; el campo de técnico debe iniciar con Richard, pero permanecer editable para otro técnico.
 

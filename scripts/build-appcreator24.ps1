@@ -26,6 +26,7 @@ $html = Read-Text (Join-Path $public 'index.html')
 $html = [regex]::Replace($html, '(?is)\s*<link\s+[^>]*rel=["'']manifest["''][^>]*>', '')
 $html = [regex]::Replace($html, '(?is)\s*<link\s+[^>]*rel=["'']icon["''][^>]*>', '')
 $html = [regex]::Replace($html, '(?is)\s*<link\s+[^>]*rel=["'']stylesheet["''][^>]*>', '')
+$html = [regex]::Replace($html, '(?is)\s*<script\s+src=["'']vendor/pdf-lib\.min\.js["'']\s*></script>', '')
 $html = [regex]::Replace($html, '(?is)\s*<script\s+src=["'']vendor/jspdf\.umd\.min\.js["'']\s*></script>', '')
 $html = [regex]::Replace($html, '(?is)\s*<script\s+type=["'']module["'']\s+src=["'']js/app\.js["'']\s*></script>', '')
 
@@ -34,9 +35,11 @@ $styleTag = "<style>`n$css`n</style>"
 $html = [regex]::Replace($html, '(?i)</head>', [System.Text.RegularExpressions.MatchEvaluator] { param($match) "$styleTag`n</head>" }, 1)
 
 $scripts = @(
+  (Read-Text (Join-Path $public 'vendor/pdf-lib.min.js')),
   (Read-Text (Join-Path $public 'vendor/jspdf.umd.min.js')),
   (Inline-JavaScript (Join-Path $public 'js/calculator.js')),
   (Inline-JavaScript (Join-Path $public 'js/signature.js')),
+  (Inline-JavaScript (Join-Path $public 'js/template-data.js')),
   (Inline-JavaScript (Join-Path $public 'js/pdf-engine.js')),
   (Inline-JavaScript (Join-Path $public 'js/whatsapp-bridge.js')),
   (Inline-JavaScript (Join-Path $public 'js/app.js'))

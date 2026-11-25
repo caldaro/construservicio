@@ -14,6 +14,8 @@ powershell -ExecutionPolicy Bypass -File scripts/build-appcreator24.ps1
 
 El resultado es `appcreator24/index.html`, autocontenido para Android WebView: no registra `sw.js`, no carga rutas relativas externas e incrusta CSS, JavaScript y `jsPDF`. La PWA usa `public/` y sí conserva su manifest y service worker.
 
+El PDF usa `public/assets/modelo-factura.pdf` como plantilla Carta y `public/js/template-data.js` como copia Base64 offline. `pdf-lib` estampa los datos únicamente sobre la primera página; para calibrar posiciones visuales se puede abrir la aplicación con `?debug=grid`.
+
 ## Publicar en GitHub Pages
 
 1. Cree un repositorio en GitHub y copie esta carpeta en su rama `main`.

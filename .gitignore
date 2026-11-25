@@ -25,3 +25,4 @@ SALIDA/
 *.pdf
 *.png
 !public/assets/*.png
+!public/assets/modelo-factura.pdf

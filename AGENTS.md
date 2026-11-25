@@ -25,12 +25,13 @@ La PWA continúa siendo 100% offline, desplegable en GitHub Pages e instalable d
 - Calculadora: `public/js/calculator.js`.
 - Firma táctil: `public/js/signature.js`.
 - PDF: `public/js/pdf-engine.js`.
+- Datos Base64 de plantilla PDF: `public/js/template-data.js`.
 - WhatsApp e historial: `public/js/whatsapp-bridge.js`.
 - No concentrar la aplicación en un archivo gigante ni introducir dependencias remotas en runtime.
 - La concentración solo está permitida en el artefacto generado `appcreator24/index.html`; nunca en la fuente modular `public/`.
 
 ## Offline y dependencias
-Todas las librerías externas deben estar en `public/vendor/`. `jsPDF` se carga localmente y todos los recursos de la aplicación se cachean en `public/sw.js`. No usar CDN en HTML, CSS o JavaScript.
+Todas las librerías externas deben estar en `public/vendor/`, incluyendo `jsPDF` y `pdf-lib`. La plantilla `public/assets/modelo-factura.pdf` y su copia Base64 local deben funcionar sin red; todos los recursos de la aplicación se cachean en `public/sw.js`. No usar CDN en HTML, CSS o JavaScript.
 
 ## Modelo exacto de orden de servicio
 - Consecutivo persistente `CS-OS-001`, `CS-OS-002`, etc.; puede editarse manualmente. Fecha actual automática.
