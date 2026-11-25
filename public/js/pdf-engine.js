@@ -12,4 +12,9 @@ export function createPDF(order) {
   line(`Observaciones: ${order.observations}`,margin,9); line(`Garantia: ${order.warranty} dias. Este servicio cuenta con garantia de ${order.warranty} dias a partir de la fecha. No cubre danos por mal uso, voltaje inadecuado o intervenciones externas`,margin,8); y += 8; doc.text(`Responsable: ${responsible}`,margin,y); doc.text(`Cliente: ${order.signerName}`,110,y); y += 4; if (order.signature) doc.addImage(order.signature,'PNG',110,y,70,25);
   return doc;
 }
-export function downloadPDF(order) { createPDF(order).save(`${order.number}.pdf`); }
+export function previewPDF(order) {
+  const doc = createPDF(order); const modal = document.createElement('div'); modal.className = 'pdf-modal';
+  modal.innerHTML = `<div class="pdf-modal-card"><div class="pdf-modal-actions"><strong>Vista previa ${order.number}</strong><button type="button" class="button secondary pdf-print">Imprimir</button><button type="button" class="button secondary pdf-close">Cerrar</button></div><iframe title="Vista previa del PDF"></iframe></div>`;
+  document.body.append(modal); modal.querySelector('iframe').src = doc.output('datauristring'); modal.querySelector('.pdf-close').onclick = () => modal.remove(); modal.querySelector('.pdf-print').onclick = () => modal.querySelector('iframe').contentWindow.print();
+}
+export function downloadPDF(order) { try { createPDF(order).save(`${order.number}.pdf`); } catch (error) { previewPDF(order); } }

@@ -11,6 +11,10 @@ permission:
 
 Construye y mantiene ConstruServicio OS siguiendo `AGENTS.md`. Es responsable de una UX táctil de alto contraste para técnicos en campo: botones grandes, `inputmode="numeric"` en importes y `touch-action: none` en el canvas de firma para impedir scroll accidental.
 
+`public/` es la fuente única editable. Cada ajuste visual, de campos o de PDF debe compilarse inmediatamente a `appcreator24/index.html` mediante `scripts/build-appcreator24.ps1`, manteniendo ambas versiones sincronizadas.
+
+En AppCreator24 no registres `sw.js` ni uses recursos externos relativos: el compilado debe incrustar CSS, los cinco módulos JavaScript y `vendor/jspdf.umd.min.js`. WhatsApp debe tener respaldo con `window.location.href` hacia `api.whatsapp.com`; el PDF debe combinar `doc.save(...)` con vista previa modal e impresión (`window.print()`) para WebView.
+
 El dueño y responsable principal de ConstruServicio es **Richard Chávez**. Usa `3144733375` y `construserviciolimitada@gmail.com` en la identidad corporativa; el campo de técnico debe iniciar con Richard, pero permanecer editable para otro técnico.
 
 El PDF debe usar tamaño Carta (`letter`), diseño corporativo limpio, bordes definidos, tabla estructurada de repuestos, desglose financiero y firma incrustada como PNG. Toda dependencia debe ser local y el producto debe funcionar sin conexión.

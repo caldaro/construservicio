@@ -7,8 +7,16 @@
 - Dueño y responsable principal: **Richard Chávez**.
 - La aplicación es un facturero digital y orden de servicio móvil para ConstruServicio Ltda., Soacha, Colombia.
 
-## Restricción de plataforma
-El teléfono del técnico bloquea la instalación de archivos `.apk` por política de crédito. La aplicación DEBE ser una PWA 100% funcional offline, desplegable en GitHub Pages e instalable desde Google Chrome mediante "Agregar a pantalla de inicio".
+## Plataformas soportadas y sincronización obligatoria
+ConstruServicio OS mantiene dos salidas sincronizadas: la PWA modular en `public/` y la compilación HTML5 monolítica para AppCreator24 en `appcreator24/index.html`. Toda modificación visual, de campos o de PDF DEBE hacerse primero en `public/` y compilarse inmediatamente con `powershell -ExecutionPolicy Bypass -File scripts/build-appcreator24.ps1`.
+
+La PWA continúa siendo 100% offline, desplegable en GitHub Pages e instalable desde Google Chrome mediante "Agregar a pantalla de inicio". El APK de AppCreator24 también es una plataforma soportada para el teléfono de Richard Chávez.
+
+## Restricciones Android WebView de AppCreator24
+- No registrar `sw.js` ni depender de rutas relativas externas desde `appcreator24/index.html`.
+- CSS, `calculator`, `signature`, `pdf-engine`, `whatsapp-bridge`, `app` y `vendor/jspdf.umd.min.js` deben quedar incrustados en línea dentro del HTML compilado.
+- WhatsApp debe usar `window.location.href = "https://api.whatsapp.com/send?..."` como respaldo cuando `window.open` sea bloqueado por WebView.
+- PDF debe intentar descarga directa con `doc.save(...)` y ofrecer vista previa modal en pantalla con opción de impresión mediante `window.print()` si WebView restringe descargas `blob:`.
 
 ## Arquitectura obligatoria
 - HTML: `public/index.html`.
@@ -19,6 +27,7 @@ El teléfono del técnico bloquea la instalación de archivos `.apk` por políti
 - PDF: `public/js/pdf-engine.js`.
 - WhatsApp e historial: `public/js/whatsapp-bridge.js`.
 - No concentrar la aplicación en un archivo gigante ni introducir dependencias remotas en runtime.
+- La concentración solo está permitida en el artefacto generado `appcreator24/index.html`; nunca en la fuente modular `public/`.
 
 ## Offline y dependencias
 Todas las librerías externas deben estar en `public/vendor/`. `jsPDF` se carga localmente y todos los recursos de la aplicación se cachean en `public/sw.js`. No usar CDN en HTML, CSS o JavaScript.

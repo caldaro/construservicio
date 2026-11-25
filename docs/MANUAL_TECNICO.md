@@ -4,6 +4,16 @@
 
 ConstruServicio Ltda. tiene como dueño y responsable principal a **Richard Chávez**. El contacto corporativo es WhatsApp `3144733375` y correo `construserviciolimitada@gmail.com`.
 
+## Arquitectura dual y compilación AppCreator24
+
+Edite siempre la fuente modular en `public/` y compile la salida monolítica después de cada cambio visual, de campos o PDF:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-appcreator24.ps1
+```
+
+El resultado es `appcreator24/index.html`, autocontenido para Android WebView: no registra `sw.js`, no carga rutas relativas externas e incrusta CSS, JavaScript y `jsPDF`. La PWA usa `public/` y sí conserva su manifest y service worker.
+
 ## Publicar en GitHub Pages
 
 1. Cree un repositorio en GitHub y copie esta carpeta en su rama `main`.
