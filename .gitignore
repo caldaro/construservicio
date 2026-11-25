@@ -1,0 +1,27 @@
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependencias y salidas
+node_modules/
+dist/
+coverage/
+*.log
+
+# Secretos locales
+.env
+.env.*
+!.env.example
+
+# Material multimedia de trabajo del directorio original
+VIDEO/
+SALIDA/
+*.mp4
+*.mp3
+*.mlt
+*.jpg
+*.pdf
+*.png
+!public/assets/*.png

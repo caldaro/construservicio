@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "agents": {
+    "arquitecto-facturero": {
+      "description": "Arquitecto principal de la PWA offline-first de ConstruServicio OS.",
+      "mode": "primary"
+    }
+  }
+}
