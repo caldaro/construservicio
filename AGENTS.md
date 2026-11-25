@@ -12,6 +12,9 @@ ConstruServicio OS mantiene dos salidas sincronizadas: la PWA modular en `public
 
 La PWA continúa siendo 100% offline, desplegable en GitHub Pages e instalable desde Google Chrome mediante "Agregar a pantalla de inicio". El APK de AppCreator24 también es una plataforma soportada para el teléfono de Richard Chávez.
 
+## Portal comercial público
+`web/` es el portal comercial oficial de ConstruServicio Ltda., separado de la herramienta operativa. Se publica en la raíz de GitHub Pages y dirige a técnicos a `/facturero/`, donde vive la compilación `appcreator24/`. Las modificaciones de marketing, conversión, contenido comercial o diseño de la landing deben hacerse exclusivamente dentro de `web/` sin alterar el flujo operativo del facturero.
+
 ## Restricciones Android WebView de AppCreator24
 - No registrar `sw.js` ni depender de rutas relativas externas desde `appcreator24/index.html`.
 - CSS, `calculator`, `signature`, `pdf-engine`, `whatsapp-bridge`, `app` y `vendor/jspdf.umd.min.js` deben quedar incrustados en línea dentro del HTML compilado.
