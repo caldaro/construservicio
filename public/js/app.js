@@ -1,7 +1,7 @@
 import { addPart, calculateTotal, numericValue, updateMoney } from './calculator.js';
 import { setupSignature } from './signature.js';
 import { downloadPDF } from './pdf-engine.js';
-import { loadHistory, saveOrder, whatsapp } from './whatsapp-bridge.js';
+import { HISTORY_KEY, loadHistory, saveOrder, whatsapp } from './whatsapp-bridge.js';
 import { BRAND_LOGO_DATA } from './branding-data.js';
 
 // Edit this local allow-list when authorizing another technician.
@@ -16,6 +16,7 @@ const loginError = document.querySelector('#login-error');
 const downloadButton = document.querySelector('#download-pdf');
 const whatsappButton = document.querySelector('#send-whatsapp');
 let savedOrder = null;
+let activeUsername = null;
 
 const nextNumber = () => `CS-OS-${String(Number(localStorage.getItem('construservicio.sequence') || 0) + 1).padStart(3, '0')}`;
 const setBrandLogos = () => { document.querySelector('#brand-logo').src = BRAND_LOGO_DATA; document.querySelector('#login-logo').src = BRAND_LOGO_DATA; };
@@ -24,7 +25,7 @@ const setEmissionActions = enabled => { downloadButton.disabled = !enabled; what
 function unlock(username) {
   const user = AUTH_USERS[username];
   localStorage.setItem(SESSION_KEY, JSON.stringify({ username, technician: user.technician, at: Date.now() }));
-  loginScreen.hidden = true; appShell.hidden = false; form.elements.technician.value = user.technician || DEFAULT_TECHNICIAN; setBrandLogos();
+  activeUsername = username; loginScreen.hidden = true; appShell.hidden = false; form.elements.technician.value = user.technician || DEFAULT_TECHNICIAN; setBrandLogos();
 }
 
 loginForm.addEventListener('submit', event => {
@@ -32,7 +33,7 @@ loginForm.addEventListener('submit', event => {
   if (!user || user.pin !== pin) { loginError.textContent = 'Usuario o PIN no válido.'; return; }
   loginError.textContent = ''; unlock(username);
 });
-document.querySelector('#logout').addEventListener('click', () => { localStorage.removeItem(SESSION_KEY); appShell.hidden = true; loginScreen.hidden = false; loginForm.reset(); });
+document.querySelector('#logout').addEventListener('click', () => { localStorage.removeItem(SESSION_KEY); activeUsername = null; savedOrder = null; setEmissionActions(false); appShell.hidden = true; loginScreen.hidden = false; loginForm.reset(); });
 
 function collect() {
   const data = Object.fromEntries(new FormData(form).entries());
@@ -57,6 +58,18 @@ function renderHistory() {
   container.querySelectorAll('[data-wa]').forEach(button => { button.onclick = () => whatsapp(orders.find(order => order.id === button.dataset.wa)); });
 }
 
+function downloadText(filename, content, type) { const url = URL.createObjectURL(new Blob([content], { type })); const link = document.createElement('a'); link.href = url; link.download = filename; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
+function csvCell(value) { return `"${String(value ?? '').replace(/"/g, '""')}"`; }
+function exportBackup() {
+  const orders = loadHistory(); const stamp = new Date().toISOString().slice(0, 10); const payload = { version: 1, exportedAt: new Date().toISOString(), sequence: Number(localStorage.getItem('construservicio.sequence') || 0), orders };
+  downloadText(`construservicio-respaldo-${stamp}.json`, JSON.stringify(payload, null, 2), 'application/json');
+  const headers = ['number', 'date', 'clientName', 'clientPhone', 'clientCity', 'equipmentType', 'technician', 'total']; const rows = [headers, ...orders.map(order => headers.map(header => order[header]))].map(row => row.map(csvCell).join(',')); downloadText(`construservicio-ordenes-${stamp}.csv`, `\ufeff${rows.join('\r\n')}`, 'text/csv;charset=utf-8');
+}
+function restoreBackup(file) {
+  const reader = new FileReader(); reader.onload = () => { try { const backup = JSON.parse(reader.result); if (!Array.isArray(backup.orders)) throw new Error('El archivo no contiene órdenes válidas.'); const orders = backup.orders.filter(order => order?.number).slice(0, 50); const highest = orders.reduce((max, order) => Math.max(max, Number(String(order.number).match(/\d+$/)?.[0] || 0)), 0); const sequence = Math.max(Number(backup.sequence) || 0, highest); localStorage.setItem(HISTORY_KEY, JSON.stringify(orders)); localStorage.setItem('construservicio.sequence', String(sequence)); savedOrder = null; setEmissionActions(false); form.elements.number.value = nextNumber(); renderHistory(); window.alert(`Respaldo restaurado. Próxima orden: ${nextNumber()}`); } catch (error) { window.alert(`No se pudo restaurar el respaldo: ${error.message}`); } }; reader.readAsText(file);
+}
+function overrideSequence() { const user = AUTH_USERS[activeUsername]; if (!user || window.prompt('Ingresa tu PIN para ajustar el consecutivo:') !== user.pin) { window.alert('PIN no válido.'); return; } const value = window.prompt('Próximo número (ejemplo: CS-OS-025):', nextNumber()); const match = String(value || '').trim().match(/(?:CS-OS-)?(\d+)$/i); if (!match) { window.alert('Usa un formato como CS-OS-025.'); return; } const next = Number(match[1]); if (next < 1) { window.alert('El consecutivo debe ser mayor que cero.'); return; } localStorage.setItem('construservicio.sequence', String(next - 1)); form.elements.number.value = nextNumber(); savedOrder = null; setEmissionActions(false); window.alert(`Próximo consecutivo configurado: ${nextNumber()}`); }
+
 const signature = setupSignature(document.querySelector('#signature'), document.querySelector('#clear-signature'));
 form.elements.number.value = nextNumber(); form.elements.date.value = new Date().toISOString().slice(0, 10); addPart(form); setEmissionActions(false); setBrandLogos();
 form.addEventListener('input', event => { if (savedOrder) { savedOrder = null; setEmissionActions(false); } if (event.target.classList.contains('money') || event.target.name === 'warranty') updateMoney(form); });
@@ -64,6 +77,10 @@ document.querySelector('#add-part').onclick = () => addPart(form);
 downloadButton.onclick = () => { if (savedOrder) downloadPDF(savedOrder); };
 whatsappButton.onclick = () => { if (savedOrder) whatsapp(savedOrder); };
 document.querySelector('#refresh-history').onclick = renderHistory;
+document.querySelector('#export-backup').onclick = exportBackup;
+document.querySelector('#restore-backup').onclick = () => document.querySelector('#backup-file').click();
+document.querySelector('#backup-file').addEventListener('change', event => { if (event.target.files[0]) restoreBackup(event.target.files[0]); event.target.value = ''; });
+document.querySelector('#sequence-override').onclick = overrideSequence;
 form.addEventListener('submit', event => { event.preventDefault(); if (!validateOrder()) return; const order = collect(); saveOrder(order); localStorage.setItem('construservicio.sequence', String(Number(order.number.match(/\d+$/)?.[0] || 0))); savedOrder = order; setEmissionActions(true); renderHistory(); form.elements.number.value = nextNumber(); window.alert(`Orden ${order.number} guardada y emitida.`); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 const session = (() => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } })();
