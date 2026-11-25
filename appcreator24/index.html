@@ -543,6 +543,7 @@ function stampOrder(page, fonts, order) {
   const { regular, bold } = fonts;
   const responsible = clean(order.technician) || OWNER;
   const text = (value, x, y, size = 8, font = regular, color = BLACK) => page.drawText(clean(value), { x, y, size, font, color });
+  const textRight = (value, right, y, size = 8, font = regular, color = BLACK) => { const content = clean(value); page.drawText(content, { x: right - font.widthOfTextAtSize(content, size), y, size, font, color }); };
   const field = (label, value, x, y, width, size = 7.5) => { text(value, x, y, size); return label; };
 
   // Header fields. The original art is 612 x 792 pt and all coordinates use its lower-left origin.
@@ -579,8 +580,8 @@ function stampOrder(page, fonts, order) {
 
   // Financial block on the right side.
   const financial = [['DIAGNÓSTICO', order.diagnosis, 303], ['MANO DE OBRA', order.labor, 286], ['REPUESTOS', order.parts, 267], ['DESPLAZAMIENTO', order.transport, 248], ['OTROS', order.other, 229]];
-  financial.forEach(([label, value, y]) => text(money(value), 492, y, 8, bold));
-  text(money(order.total), 497, 188, 10, bold, GREEN);
+  financial.forEach(([label, value, y]) => textRight(money(value), 570, y, 8, bold));
+  textRight(money(order.total), 552, 188, 10, bold, GREEN);
 
   // Closing fields and the captured signature.
   text(responsible, 230, 104, 8); text(order.signerName, 230, 84, 8);
