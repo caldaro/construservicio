@@ -96,17 +96,6 @@ export async function createPDF(order) {
 }
 
 async function pdfBytes(order) { const pdf = await createPDF(order); return pdf.save(); }
-
-export async function previewPDF(order) {
-  try {
-    const bytes = await pdfBytes(order); const blob = new Blob([bytes], { type: 'application/pdf' }); const modal = document.createElement('div'); modal.className = 'pdf-modal';
-    modal.innerHTML = `<div class="pdf-modal-card"><div class="pdf-modal-actions"><strong>Vista previa ${order.number}</strong><button type="button" class="button secondary pdf-print">Imprimir PDF</button><button type="button" class="button secondary pdf-close">Cerrar</button></div><iframe title="Vista previa del PDF"></iframe></div>`;
-    document.body.append(modal); const frame = modal.querySelector('iframe'); frame.src = URL.createObjectURL(blob); modal.querySelector('.pdf-close').onclick = () => { URL.revokeObjectURL(frame.src); modal.remove(); }; modal.querySelector('.pdf-print').onclick = () => { try { frame.focus(); frame.contentWindow.print(); } catch (error) { window.print(); } };
-  } catch (error) {
-    window.alert(`No fue posible preparar el PDF: ${error.message || error}`);
-  }
-}
-
 export async function downloadPDF(order) {
-  try { const bytes = await pdfBytes(order); const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })); const link = document.createElement('a'); link.href = url; link.download = `${order.number}.pdf`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch (error) { await previewPDF(order); }
+  try { const bytes = await pdfBytes(order); const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })); const link = document.createElement('a'); link.href = url; link.download = `${order.number}.pdf`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch (error) { window.alert(`No fue posible descargar el PDF: ${error.message || error}`); }
 }
