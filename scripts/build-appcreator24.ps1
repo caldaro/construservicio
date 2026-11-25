@@ -39,6 +39,7 @@ $scripts = @(
   (Read-Text (Join-Path $public 'vendor/jspdf.umd.min.js')),
   (Inline-JavaScript (Join-Path $public 'js/calculator.js')),
   (Inline-JavaScript (Join-Path $public 'js/signature.js')),
+  (Inline-JavaScript (Join-Path $public 'js/branding-data.js')),
   (Inline-JavaScript (Join-Path $public 'js/template-data.js')),
   (Inline-JavaScript (Join-Path $public 'js/pdf-engine.js')),
   (Inline-JavaScript (Join-Path $public 'js/whatsapp-bridge.js')),

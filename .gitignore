@@ -18,6 +18,7 @@ coverage/
 # Material multimedia de trabajo del directorio original
 VIDEO/
 SALIDA/
+RECURSOS/
 *.mp4
 *.mp3
 *.mlt
@@ -25,4 +26,7 @@ SALIDA/
 *.pdf
 *.png
 !public/assets/*.png
+!public/assets/logo.jpg
+!public/assets/mascota.jpg
+!public/assets/hero.jpg
 !public/assets/modelo-factura.pdf
