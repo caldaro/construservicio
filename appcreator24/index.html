@@ -546,27 +546,29 @@ function stampOrder(page, fonts, order) {
   const field = (label, value, x, y, width, size = 7.5) => { text(value, x, y, size); return label; };
 
   // Header fields. The original art is 612 x 792 pt and all coordinates use its lower-left origin.
-  text(order.number?.replace(/^CS-OS-/, '') || 'XXX', 474, 739, 9, bold, GREEN);
-  text(order.date || '', 468, 711, 8, bold);
+  text(order.number?.replace(/^CS-OS-/, '') || 'XXX', 474, 738, 9, bold, GREEN);
+  const dateParts = clean(order.date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const [year, month, day] = dateParts ? dateParts.slice(1) : ['', '', ''];
+  text(day, 454, 711, 8, bold); text(month, 482, 711, 8, bold); text(year, 510, 711, 8, bold);
   const services = [
-    { name: 'Diagnóstico', x: 420, y: 666 }, { name: 'Reparación', x: 484, y: 666 }, { name: 'Instalación', x: 546, y: 666 },
-    { name: 'Mantenimiento', x: 420, y: 648 }, { name: 'Otro', x: 497, y: 648 }
+    { name: 'Diagnóstico', x: 420, y: 649 }, { name: 'Reparación', x: 484, y: 649 }, { name: 'Instalación', x: 546, y: 649 },
+    { name: 'Mantenimiento', x: 420, y: 631 }, { name: 'Otro', x: 497, y: 631 }
   ];
   services.forEach(service => { if (checked(order, service.name)) text('X', service.x, service.y, 9, bold, GREEN); });
-  if (checked(order, 'Otro')) text(order.serviceOther, 530, 648, 7.5); 
+  if (checked(order, 'Otro')) text(order.serviceOther, 530, 631, 7.5);
 
   // Client block.
-  field('Nombre / Razón Social', order.clientName, 106, 608, 190); field('Dirección', order.clientAddress, 326, 608, 250);
-  field('Documento / NIT', order.clientDocument, 93, 589, 190); field('Ciudad / Barrio', order.clientCity, 326, 589, 250);
-  field('Teléfono', order.clientPhone, 93, 570, 180); field('Correo electrónico', order.clientEmail, 326, 570, 250);
+  field('Nombre / Razón Social', order.clientName, 106, 594, 190); field('Dirección', order.clientAddress, 405, 594, 170);
+  field('Documento / NIT', order.clientDocument, 93, 575, 190); field('Ciudad / Barrio', order.clientCity, 405, 575, 170);
+  field('Teléfono', order.clientPhone, 93, 556, 180); field('Correo electrónico', order.clientEmail, 405, 556, 170);
 
   // Appliance block.
-  field('Tipo de equipo', order.equipmentType, 14, 532, 150); field('Marca', order.equipmentBrand, 182, 532, 135); field('Modelo', order.equipmentModel, 326, 532, 150); field('Serial', order.equipmentSerial, 485, 532, 110);
-  drawWrapped(page, regular, order.equipmentNotes, 14, 501, 555, 7.5, 11, 3);
+  field('Tipo de equipo', order.equipmentType, 14, 514, 150); field('Marca', order.equipmentBrand, 182, 514, 135); field('Modelo', order.equipmentModel, 326, 514, 150); field('Serial', order.equipmentSerial, 485, 514, 110);
+  drawWrapped(page, regular, order.equipmentNotes, 190, 496, 380, 7.5, 11, 3);
 
   // Two service description columns.
-  drawWrapped(page, regular, order.failure, 13, 411, 295, 7.5, 19, 3);
-  drawWrapped(page, regular, order.work, 326, 411, 270, 7.5, 19, 3);
+  drawWrapped(page, regular, order.failure, 13, 396, 295, 7.5, 19, 3);
+  drawWrapped(page, regular, order.work, 326, 398, 270, 7.5, 19, 3);
 
   // Parts table. The template has four empty rows; additional rows are kept inside the same table area.
   const columns = [{ x: 11, width: 37 }, { x: 48, width: 148 }, { x: 196, width: 82 }, { x: 278, width: 65 }, { x: 343, width: 63 }];
