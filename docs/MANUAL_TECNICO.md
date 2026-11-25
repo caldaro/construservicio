@@ -17,7 +17,7 @@ El resultado es `appcreator24/index.html`, autocontenido para Android WebView: n
 ## Publicar en GitHub Pages
 
 1. Cree un repositorio en GitHub y copie esta carpeta en su rama `main`.
-2. Envíe los cambios a `main`; `.github/workflows/deploy-pages.yml` publica automáticamente la carpeta `public/`.
+2. Envíe los cambios a `main`; `.github/workflows/deploy-pages.yml` publica automáticamente la compilación de `appcreator24/`.
 3. En GitHub abra **Settings > Pages** y seleccione **GitHub Actions** como origen si aún no está configurado.
 4. Espere el despliegue y abra la URL HTTPS que GitHub Pages muestra. El service worker solo funciona en HTTPS o en `localhost`.
 5. Pruebe una orden, genere un PDF y active modo avión antes de entregar el enlace al técnico.
