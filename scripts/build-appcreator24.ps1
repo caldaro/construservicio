@@ -16,7 +16,7 @@ function Inline-JavaScript([string] $path) {
   $code = Read-Text $path
   # El HTML5 monolítico comparte el código fuente, pero no puede ejecutar imports ES externos.
   $code = [regex]::Replace($code, '(?m)^\s*import\s+.*?;\s*$', '')
-  $code = [regex]::Replace($code, '\bexport\s+(?=(const|function|let|var|class)\b)', '')
+  $code = [regex]::Replace($code, '\bexport\s+(?=(async\s+)?(const|function|let|var|class)\b)', '')
   $code = [regex]::Replace($code, '\bexport\s*\{[^}]+\};?', '')
   $code = [regex]::Replace($code, 'if\s*\(\s*''serviceWorker''\s+in\s+navigator\s*\)\s*navigator\.serviceWorker\.register\([^;]+;\s*', '')
   return $code
